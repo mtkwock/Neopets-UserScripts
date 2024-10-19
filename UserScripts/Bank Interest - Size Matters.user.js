@@ -52,7 +52,6 @@ function beat(cfg) {
         const x = frac / cfg.beatFrac;
         y = cfg.amplitude * Math.sin(x * 2 * Math.PI) * (1.5 - x);
     }
-    console.log(y);
     return y;
 }
 
