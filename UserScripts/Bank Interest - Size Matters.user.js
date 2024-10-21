@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bank Interest - Size Matters
 // @namespace    neopets.bank
-// @version      2024-10-19
+// @version      2024-10-21
 // @description  Makes Collecting Interest a Big Button prevents Withdrawal/Deposit if you haven't collected interest
 // @author       mtkwock
 // @match        https://www.neopets.com/bank.phtml*
@@ -92,7 +92,7 @@ function disableDepositWithdrawBtns() {
         input.value = CONFIG.disabledMessage;
     }
 
-    const interestBox = document.getElementsByClassName('frmCollectInterest')[0];
+    const interestBox = document.getElementById('frmCollectInterest');
     interestBox.onclick = () => {
         for (const input of inputs) {
             input.disabled = '';

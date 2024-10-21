@@ -13,7 +13,8 @@ Do note that this is a personal project! It's a game after all, and this is mere
 
 ### Bank Interest - Size Matters
 
-**Status:** `PENDING` - Not (yet) deemed Approved by Reddit Mods
+**Status:** `APPROVED` - Deemed Safe to use by r/Neopets Mods, See [Discord Message Link](https://discord.com/channels/123668853698854913/1194010372173213697/1297201465965940746)
+
 
 This script is a small one that makes the `Collect Interest` Button on the Bank Page far larger than usual, with optional animations. This also (optionally) makes the Deposit and Withdraw inputs completely disabled. This script is 30% to prevent losing your daily interest and 70% just to have fun with messing around with the button size and making animations.
 
