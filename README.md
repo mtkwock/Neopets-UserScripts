@@ -40,23 +40,53 @@ You can always adjust the actual variables within the options to make it very cu
 
 ### Book Library
 
-**Status:** `IN PROGRESS` - Designing features and trying to get approval before starting
+**Status:** `PENDING APPROVAL` - Rough Guidelines for implementation determined. Submitting Script for approval by r/Neopets mods.
 
 This script keeps an internal memory of your books read for each of your pets. It also grays-out books that you have read in your SDB, Inventory, and Shop Stock/Gallery.
+
+To update your pet's read-book list, visit `https://www.neopets.com/books_read.phtml?pet_name=[PETNAME]` along with the Booktastic page. Additionally, go to [JN's Book Checklist](https://items.jellyneo.net/tools/book-checklist/) and follow directions to set up your pet's unread checklist. You only need to go to JN's checklist once per pet (or if new books come out). However, in order to update your read list (e.g. after reading a dozen books), you will still need to visit your pet lookup page(s) again.
+
+Updatae the CONFIG object at the beginning of the script to customize the script to change how highlights and lowlights are shown along with disabling of locations.
+
+```js
+const CONFIG = {
+    // How to mark books that are read
+    lowlight: {
+        background: 'gray',
+        opacity: '50%',
+        border: '',
+    },
+    // How to mark books that are unread
+    highlight: {
+        background: 'yellow',
+        opacity: '',
+        border: '',
+    },
+
+    // Comment out to remove graying/highlighting of locations.
+    enabledLocations: [
+        '/safetydeposit.phtml', // Safety Deposit Box
+        '/browseshop.phtml', // Player Shops
+        '/inventory.phtml', // Player Inventory
+        '/gallery/index.phtml', // Player Galleries
+    ],
+};
+```
 
 #### Critical Features
 
 Mainline features
 
-1. On visiting Pet Lookup, stores all of your pet's read books locally.
+1. [DONE] On visiting Pet Lookup, stores all of your pet's read books locally.
 
    Regular Books: `https://www.neopets.com/books_read.phtml?pet_name=`
 
    Booktastic: `https://www.neopets.com/moon/books_read.phtml?pet_name=`
-2. In your (Inventory, SDB, Shop Stock, Item Gallery) books your ACTIVE PET has read are grayed out
-3. In your Pet Lookup, able to list UNREAD books, along with links to JellyNeo, Shop Wizard, Trading Post.
-4. Customizability of the GRAYING effect. e.g. Opacity, bg color
-5. Able to toggle the graying effect in different locations (e.g. Do not display in Shop Stock)
+2. [DONE] In your (Inventory, SDB, Shop Stock, Item Gallery) books your ACTIVE PET has read are grayed out
+3. [DONE] Customizability of the GRAYING effect. e.g. Opacity, bg color
+4. [DONE] Able to toggle the graying effect in different locations (e.g. Do not display in Shop Stock)
+5. [DONE] Books in available locations which your pet has NOT READ are highlighted (e.g. yellow outline, light yellow BG).
+6. [DONE] Parses Unread Books from Jelly Neo's Book Checklist page after user loads into it (Requires full manual input of the Page Source). This is then kept up to date for that pet whenever viewing the Read Books page.
 
 #### Potential Features
 
@@ -64,14 +94,17 @@ These are features that are not critical and may not be implemented.
 
 The below have relatively difficult impementations thata
 
-1. Remember books in your Inventory, SDB, Shop Stock, Gallery and highlight these books differently (e.g. Books that your pet has not read but is in inventory are YELLOW instead of GRAY)
-2. Automated/Manual list of ALL books. Potentially opens a link to JellyNeo's most recent books and updates it?
-3. Books in available locations which your pet has NOT READ are highlighted (e.g. yellow outline, light yellow BG).
+1. [Low Priority - Not doing] Remember books in your Inventory, SDB, Shop Stock, Gallery and highlight these books differently (e.g. Books that your pet has not read but is in inventory are YELLOW instead of GRAY)
+2. [REJECTED] ~~Automated/Manual list of ALL books. Potentially opens a link to JellyNeo's most recent books and updates it?~~ Full automation rejected due to potential automated web-scraping.
+
+  Instead, electing to have it store remaining books when the user MANUALLY uses [JN's Book Checklist](https://items.jellyneo.net/tools/book-checklist/) - See Mainline Features [6]
+
+4. [Low Priority - Not Doing] In your Pet Lookup, able to list UNREAD books, along with links to JellyNeo, Shop Wizard, Trading Post.
 
 These might be considered unfair for other players
 
-1. In the TRADING POST, books your ACTIVE PET has read are grayed out.
-2. In PLAYER SHOPS, books your ACTIVE PET has read are grayed out.
-3. In NPC SHOPS, books your ACTIVE PET has read are grayed out.
-4. In Auction House, books your ACTIVE PET has read are grayed out.
+1. [DONE] In PLAYER SHOPS, books your ACTIVE PET has read are grayed out. - No notable time-based advantage since player shops are already the market competition.
+2. [Low priority - Not Doing] In the TRADING POST, books your ACTIVE PET has read are grayed out.
+3. [Low Priority - Not Doing] In Auction House, books your ACTIVE PET has read are grayed out.
+4. [REJECTED] ~~In NPC SHOPS, books your ACTIVE PET has read are grayed out.~~ This gives potential timing-based advantage if the player chooses only "cheap/common" books as their active pet.
 
