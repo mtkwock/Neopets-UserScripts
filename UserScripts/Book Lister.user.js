@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Book Lister
-// @namespace    neopets.books
-// @version      2024-10-25
+// @name         Book Lister OG
+// @namespace    http://tampermonkey.net/
+// @version      2024-10-26
 // @description  Grays out read books in Inventory, SDB, and player shops for active pet.
 // @author       You
 // @match        https://www.neopets.com/books_read.phtml?pet_name=*
@@ -9,8 +9,11 @@
 // @match        https://www.neopets.com/safetydeposit.phtml*
 // @match        https://www.neopets.com/browseshop.phtml*
 // @match        https://www.neopets.com/inventory.phtml
-// @match        https://items.jellyneo.net/tools/results/
 // @match        https://www.neopets.com/gallery/index.phtml*
+// @match        https://www.neopets.com/auctions.phtml*
+// @match        https://www.neopets.com/genie.phtml
+// @match        https://www.neopets.com/island/tradingpost.phtml*
+// @match        https://raw.githubusercontent.com/mtkwock/Neopets-UserScripts/refs/heads/main/all_books.json*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=neopets.com
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -32,10 +35,17 @@ const CONFIG = {
 
     // Comment out to remove graying/highlighting of locations.
     enabledLocations: [
+        '/books_read.phtml', // Required for getting read books.
+        '/moon/books_read.phtml', // Required for Booktastic Books
+        '/mtkwock/Neopets-UserScripts/refs/heads/main/all_books.json', // Required for getting unread books
+
         '/safetydeposit.phtml', // Safety Deposit Box
         '/browseshop.phtml', // Player Shops
         '/inventory.phtml', // Player Inventory
         '/gallery/index.phtml', // Player Galleries
+        '/auctions.phtml', // Auction House
+        '/genie.phtml', // Auction Genie
+        '/island/tradingpost.phtml', // Trading Post
     ],
 };
 
@@ -122,8 +132,17 @@ function setPetBooks(pet, bookString, set, showAlert) {
 class ReadBooksHandler {
     constructor() {
         const tables = [...document.getElementById('content').getElementsByTagName('table')];
+        const petEl = document.getElementsByTagName('center')[0];
         this.bookTable = tables.filter((tbl) => tbl.align == 'center')[0];
         this.isTastic = false;
+
+        const p = document.createElement('p');
+        const a = document.createElement('a');
+        a.innerText = 'Get Unread Books from GitHub!';
+        a.href = 'https://raw.githubusercontent.com/mtkwock/Neopets-UserScripts/refs/heads/main/all_books.json?petName=' + this.getPetName();
+        a.target = '_blank';
+        p.appendChild(a);
+        petEl.appendChild(p);
     }
 
     getAllBookNames() {
@@ -150,7 +169,7 @@ class ReadBooksHandler {
                 unreadBooks.delete(readBook);
             }
 
-            setPetBooks(this.getPetName(), JSON.stringify([...unreadBooks]), BookSet.unread, true);
+            setPetBooks(this.getPetName(), JSON.stringify([...unreadBooks]), BookSet.unread);
         });
     }
 }
@@ -158,27 +177,89 @@ class ReadBooksHandler {
 class UnreadBooksHandler {
     constructor() {
         this.petName;
-        const bookListHeaderMatch = document.getElementsByTagName('h2')[0].innerText.match(/(\w+) has \d+ books to read:/);
-        if (!bookListHeaderMatch) {
-            console.log('Results do not match book list');
-            return;
+        this.pre = document.getElementsByTagName('pre')[0];
+        this.allBooks = JSON.parse(this.pre.innerText);
+        this.parent = this.pre.parentElement;
+        this.pre.style.display = 'none';
+        this.logArea = document.createElement('textarea');
+        this.logArea.value = 'Logs';
+        this.logArea.cols = 70;
+        this.logArea.rows = 5;
+        this.parent.appendChild(this.logArea);
+        this.parent.appendChild(document.createElement('br'))
+        this.petInput = document.createElement('input');
+        this.petInput.placeholder = 'Pet name';
+        const params = new URLSearchParams(window.location.search);
+        const petName = params.get('petName');
+        if (petName) {
+            this.petInput.value = petName;
         }
-        this.petName = bookListHeaderMatch[1];
-        console.log('Match book list for', this.petName);
+        this.parsePetButton = document.createElement('button');
+        this.parsePetButton.innerText = 'Store and show unread books';
+        this.parent.appendChild(this.petInput);
+        this.parent.appendChild(this.parsePetButton);
+
+        this.unreadTable = document.createElement('table');
+        this.parent.appendChild(this.unreadTable);
+    }
+
+    log(str) {
+        this.logArea.value = str;
+    }
+
+    updateTable(remainingBooks) {
+        for (const child of this.unreadTable.children) {
+            this.unreadTable.removeChild(child);
+        }
+        remainingBooks.sort();
+        const ROW_LENGTH = 5;
+        for (let i = 0; i < remainingBooks.length; i += ROW_LENGTH) {
+            const tr = document.createElement('tr');
+
+            for (let j = 0; j < ROW_LENGTH; j++) {
+                const book = remainingBooks[i + j];
+                console.log(book)
+                if (!book) {
+                    break;
+                }
+                const td = document.createElement('td');
+                const swAnchor = document.createElement('a');
+                const nameDiv = document.createElement('span');
+                nameDiv.innerText = book;
+                swAnchor.innerText = ' SW ';
+                const searchName = book.replace(/\s/g, '+').replace(/&/g, '%26');
+                swAnchor.href = 'https://www.neopets.com/shops/wizard.phtml?string=' + searchName;
+                swAnchor.target = '_blank';
+                td.appendChild(swAnchor);
+                td.appendChild(nameDiv);
+
+                tr.appendChild(td);
+            }
+            this.unreadTable.appendChild(tr);
+        }
     }
 
     setUp() {
-        if (!this.petName) {
-            return;
+        this.parsePetButton.onclick = async () => {
+            const petName = this.petInput.value;
+            const readBooks = await getPetBooks(petName, BookSet.read);
+            console.log("Read Books Length", readBooks.size);
+            if (!readBooks.size) {
+                this.log('No pet data for ' + petName + ', not storing anything.\nCheck spelling? Did you visit read book page?\nhttps://www.neopets.com/books_read.phtml?pet_name=' + petName);
+                return;
+            }
+            const unreadBooks = new Set(this.allBooks);
+            for (const book of readBooks) {
+                unreadBooks.delete(book);
+            }
+            const unreadString = JSON.stringify([...unreadBooks]);
+            setPetBooks(petName, unreadString, BookSet.unread);
+            this.updateTable([...unreadBooks]);
+            this.log(`Stored ${unreadBooks.size} unread books for ${petName}`);
+        };
+        if (this.petInput.value) {
+            this.parsePetButton.click();
         }
-
-        const anchors = document.getElementsByClassName('mall-block-grid-1')[0].getElementsByTagName('a');
-        const unreadBooks = new Set();
-        for (const anchor of anchors) {
-            unreadBooks.add(anchor.innerText);
-        }
-        const books = JSON.stringify([...unreadBooks]);
-        setPetBooks(this.petName, books, BookSet.unread);
     }
 }
 
@@ -290,6 +371,70 @@ class PlayerShopHighlighter extends AbstractBookHighlighter {
                 };
             });
     }
+
+    async highlightBooks() {
+        const books = await this.getBooks();
+        for (const {name, imgName, highlightLocation} of books) {
+            const checkBtn = document.createElement('button');
+            checkBtn.innerText = 'Check Read Status';
+            checkBtn.onclick = async () => {
+                checkBtn.innerText = 'Checking...';
+                checkBtn.disabled = true;
+                await new Promise(resolve => setTimeout(resolve, 350 + 300 * Math.random()));
+                if (this.activePetBooks.has(name) || this.activePetTastic.has(imgName)) {
+                    this.lowlight(highlightLocation);
+                    checkBtn.innerText = 'Book Read';
+                } else if (this.activePetUnread.has(name) || this.activePetUnreadTastic.has(imgName)) {
+                    this.highlight(highlightLocation);
+                    checkBtn.innerText = 'Book not Read';
+                } else {
+                    checkBtn.innerText = 'Not a Book?';
+                }
+            };
+
+            // First element of the row, needs to append the row
+            if (!highlightLocation.previousElementSibling) {
+                const itemTr = highlightLocation.parentElement;
+                const buttonTr = document.createElement('tr');
+                if (!itemTr.nextElementSibling) {
+                    itemTr.parentElement.appendChild(buttonTr);
+                } else {
+                    itemTr.parentElement.insertBefore(buttonTr, itemTr.nextElementSibling);
+                }
+            }
+
+            const td = document.createElement('td');
+            td.appendChild(checkBtn);
+            highlightLocation.parentElement.nextElementSibling.appendChild(td);
+        }
+    }
+}
+
+class AuctionHighlighter extends AbstractBookHighlighter {
+    getBooks() {
+        const itemRows = [...document.getElementsByClassName('content')[0].getElementsByTagName('tr')].filter(tr => tr.children[0].innerText.match(/^\d+$/));
+
+        return itemRows.map((row) => {
+            return {
+                name: row.children[2].innerText,
+                imgName: extractTastic(row.children[1].getElementsByTagName('img')[0]),
+                highlightLocation: row.children[2],
+            };
+        })
+    }
+}
+
+class TradingPostHighlighter extends AbstractBookHighlighter {
+    getBooks() {
+        const itemTds = [...document.getElementsByTagName('td')].filter(td => td.firstChild && td.firstChild.tagName == 'IMG' && td.align == 'left');
+        return itemTds.map((td) => {
+            return {
+                name: td.innerText.trim(),
+                imgName: extractTastic(td.firstChild),
+                highlightLocation: td,
+            };
+        });
+    }
 }
 
 const BOOK_TYPES = new Set([
@@ -342,11 +487,14 @@ class GalleryHighlighter extends AbstractBookHighlighter {
 const pathToHandlers = {
     '/books_read.phtml': ReadBooksHandler,
     '/moon/books_read.phtml': ReadTasticHandler,
-    '/tools/results/': UnreadBooksHandler,
+    '/mtkwock/Neopets-UserScripts/refs/heads/main/all_books.json': UnreadBooksHandler,
 
     '/safetydeposit.phtml': SdbBookHighlighter,
     '/browseshop.phtml': PlayerShopHighlighter,
+    '/auctions.phtml': AuctionHighlighter,
+    '/genie.phtml': AuctionHighlighter,
     '/inventory.phtml': InventoryHighlighter,
+    '/island/tradingpost.phtml': TradingPostHighlighter,
     '/gallery/index.phtml': GalleryHighlighter,
 };
 
