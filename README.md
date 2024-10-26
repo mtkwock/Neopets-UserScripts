@@ -86,25 +86,31 @@ Mainline features
 3. [DONE] Customizability of the GRAYING effect. e.g. Opacity, bg color
 4. [DONE] Able to toggle the graying effect in different locations (e.g. Do not display in Shop Stock)
 5. [DONE] Books in available locations which your pet has NOT READ are highlighted (e.g. yellow outline, light yellow BG).
-6. [DONE] Parses Unread Books from Jelly Neo's Book Checklist page after user loads into it (Requires full manual input of the Page Source). This is then kept up to date for that pet whenever viewing the Read Books page.
+6. [DONE]  Changed to accessing a GitHub file which will calculate the unread books for your pet. This was changed because JellyNeo scraping is not allowed as per their policy (Even if it would actually decrease their traffic because they don't have to keep recalculating it...). This GitHub can be visited from the Pet's Book Lookup via the link under the pet picture. Opening this page from that link will generate the Unread Books and provide a minimal interface to see remaining books as well as SW links.
+7. [DONE] In the TRADING POST, books your ACTIVE PET has read are grayed out. - Timing is not a question here. This is better to confirm that you need the book in question.
+8. [DONE] In Auction House, books your ACTIVE PET has read are grayed out. - It's an auction, it'd be far better to look it up the item in other ways to determine its value rather than checking your pet's read status.
 
 #### Potential Features
 
 These are features that are not critical and may not be implemented.
 
-The below have relatively difficult impementations thata
+The below have relatively difficult impementations that may prohibit feature creation.
 
 1. [Low Priority - Not doing] Remember books in your Inventory, SDB, Shop Stock, Gallery and highlight these books differently (e.g. Books that your pet has not read but is in inventory are YELLOW instead of GRAY)
-2. [REJECTED] ~~Automated/Manual list of ALL books. Potentially opens a link to JellyNeo's most recent books and updates it?~~ Full automation rejected due to potential automated web-scraping.
+2. [REJECTED] Proposal 1 ~~Automated/Manual list of ALL books. Potentially opens a link to JellyNeo's most recent books and updates it?~~ Full automation rejected due to potential automated web-scraping.
 
-  Instead, electing to have it store remaining books when the user MANUALLY uses [JN's Book Checklist](https://items.jellyneo.net/tools/book-checklist/) - See Mainline Features [6]
+  [REJECTED] Proposal 2: ~~Parses Unread Books from Jelly Neo's Book Checklist page after user loads into it (Requires full manual input of the Page Source). This is then kept up to date for that pet whenever viewing the Read Books page.~~
 
-4. [Low Priority - Not Doing] In your Pet Lookup, able to list UNREAD books, along with links to JellyNeo, Shop Wizard, Trading Post.
+  Instead, Using a GitHub page that holds (most) books to calculate unread books - See Mainline Features [6].
 
-These might be considered unfair for other players
+3. [Low Priority - Not Doing] In your Pet Lookup, able to list UNREAD books, along with links to JellyNeo, Shop Wizard, Trading Post.
 
-1. [DONE] In PLAYER SHOPS, books your ACTIVE PET has read are grayed out. - No notable time-based advantage since player shops are already the market competition.
-2. [Low priority - Not Doing] In the TRADING POST, books your ACTIVE PET has read are grayed out.
-3. [Low Priority - Not Doing] In Auction House, books your ACTIVE PET has read are grayed out.
-4. [REJECTED] ~~In NPC SHOPS, books your ACTIVE PET has read are grayed out.~~ This gives potential timing-based advantage if the player chooses only "cheap/common" books as their active pet.
+4. [POSSIBLE] When reading a book to your pet, auto-updates local DB of read and unread books.
 
+These might be considered unfair for other players and are being reviewed.
+
+1. [REJECTED] Proposal 1: ~~In PLAYER SHOPS, books your ACTIVE PET has read are grayed out. - No notable time-based advantage since player shops are already the market competition.~~
+
+   [DONE] Proposal 2: Add a button that can be clicked to check an item's read status. This is equivalent to copying the item name and searching for it in a read/unread text file.
+
+2. [REJECTED] ~~In NPC SHOPS, books your ACTIVE PET has read are grayed out.~~ This gives potential timing-based advantage if the player chooses only "cheap/common" books as their active pet.
