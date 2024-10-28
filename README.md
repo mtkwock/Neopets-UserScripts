@@ -38,9 +38,59 @@ By changing the above object's values, you can adjust the interaction to your pr
 You can always adjust the actual variables within the options to make it very custom, but I find these good enough at the moment.
 
 
+### Training Reformatter
+
+**STATUS:** `PENDING APPROVAL` - Sending to r/Neopets mods for approval
+
+Highly condenses the Training Status Page into a smaller (slightly configurable) grid. This also aggregates payments and shows it on the Safety Deposit Box when you navigate there. This is very useful if you have more than 6+ pets since the page was designed with only 4 pets in mind.
+
+Note that this only works on Mystery Island Training and Krawk Island and NOT the Secret Ninja Training Academy because I don't yet have any level 250 Neopets...
+
+#### Features
+
+* Neopets are compressed into a table (3-5 columns looks pretty good)
+* Removes unnecessary text and whitespace from each area to conserve more space
+* Aggregates currently needed payments, allowing you to easily determine how many of each Dubloon/Codestone you need
+* Color coded states of training. This is configurable.
+
+TODO-list
+
+* Allow training initialization from the Status Page
+* Support Secret Ninja Training Academy
+
+#### Customization
+
+At the top of the file, you can edit the `CONFIG` object to more appropriately change it to your liking.
+
+```js
+const CONFIG = {
+    // Number of columns to show pets for.
+    // 5 fits within the white border. 2-4 all work as well.
+    columns: 5,
+    // Show the SDB button along with the aggregated payments required.
+    showAllSdbButton: true,
+    // Enable search buttons for individual payment types.
+    searchButton: {
+        safetyDepositBox: true,
+        shopWizard: true,
+    },
+    // These should be accepted CSS colors, but they can be color codes as well
+    statusColor: {
+        noTraining: 'lightgray',
+        activeTraining: 'moccasin',
+        courseCompletion: 'lightgreen',
+        needPayment: 'indianred',
+    },
+    // TODO: Currently does nothing. Could be used to show stats on the Courses page
+    storePetStats: false,
+    // Border coloring for each pet.
+    borderColor: '1px solid gray',
+};
+```
+
 ### Book Library
 
-**Status:** `PENDING APPROVAL` - Rough Guidelines for implementation determined. Submitting Script for approval by r/Neopets mods.
+**Status:** `FEEDBACK RECEIVED, UPDATE PENDING APPROVAL` - Implementation done. Certain JN features and Player Shop features required changing. Updated with new propals, re-submitting Script for approval by r/Neopets mods.
 
 This script keeps an internal memory of your books read for each of your pets. It also grays-out books that you have read in your SDB, Inventory, and Shop Stock/Gallery.
 

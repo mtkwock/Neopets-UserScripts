@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Book Lister OG
+// @name         Book Lister
 // @namespace    http://tampermonkey.net/
 // @version      2024-10-26
 // @description  Grays out read books in Inventory, SDB, and player shops for active pet.
