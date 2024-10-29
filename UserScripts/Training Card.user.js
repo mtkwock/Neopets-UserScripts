@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Training Island Card Generator
-// @namespace    http://tampermonkey.net/
+// @namespace    neopets.training
 // @version      2024-10-28
-// @description  try to take over the world!
+// @description  Highly condenses Training into the Status Page.
 // @author       You
 // @match        https://www.neopets.com/island/training.phtml?type=status*
 // @match        https://www.neopets.com/pirates/academy.phtml?type=status*
@@ -11,21 +11,30 @@
 // @match        https://www.neopets.com/safetydeposit.phtml?obj_name=&category=3
 // @match        https://www.neopets.com/island/process_training.phtml
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=neopets.com
+// @run-at       document-body
 // @grant        none
 // ==/UserScript==
 
 const CONFIG = {
+    // Number of Columns. 5 is the max that fits "nicely". 3-5 all work well.
     columns: 5,
+    // Whether to add Shop Wizard button next to Codestone/Dubloons
     shopWizardBtn: true,
+    // Whether to add Safety Deposit Box button next to Codestone/Dubloons
     sdbBtn: true,
+    // Background Colors to apply to the status area depending on context.
+    // Must be CSS colors.
     statusColor: {
         notTraining: 'lightgray',
         needsPayment: 'indianred',
         inProgress: 'moccasin',
         complete: 'lightgreen',
     },
+
+    // Border of each Pet Card.
     borderColor: '1px solid gray',
 
+    // Quickly Navigate back to Status Page after Course Completion.
     skipCompleteCourseScreen: true,
 };
 
