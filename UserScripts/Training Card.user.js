@@ -15,25 +15,17 @@
 // ==/UserScript==
 
 const CONFIG = {
-    // Number of Columns. 5 is the max that fits "nicely". 3-5 all work well.
     columns: 5,
-    // Whether to add Shop Wizard button next to Codestone/Dubloons
     shopWizardBtn: true,
-    // Whether to add Safety Deposit Box button next to Codestone/Dubloons
     sdbBtn: true,
-    // Background Colors to apply to the status area depending on context.
-    // Must be CSS colors.
     statusColor: {
         notTraining: 'lightgray',
         needsPayment: 'indianred',
         inProgress: 'moccasin',
         complete: 'lightgreen',
     },
-
-    // Border of each Pet Card.
     borderColor: '1px solid gray',
 
-    // Quickly Navigate back to Status Page after Course Completion.
     skipCompleteCourseScreen: true,
 };
 
