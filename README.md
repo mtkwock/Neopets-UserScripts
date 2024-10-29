@@ -38,25 +38,32 @@ By changing the above object's values, you can adjust the interaction to your pr
 You can always adjust the actual variables within the options to make it very custom, but I find these good enough at the moment.
 
 
-### Training Reformatter
+### Training Card/Reformatter
+
+NOTE: Training Card is the newer of the two after realizing that building the table constructively instead of modifying the existing table is far more stable and flexible. I suggest using that one as it's probably more stable and fully featured.
 
 **STATUS:** `PENDING APPROVAL` - Sending to r/Neopets mods for approval
 
 Highly condenses the Training Status Page into a smaller (slightly configurable) grid. This also aggregates payments and shows it on the Safety Deposit Box when you navigate there. This is very useful if you have more than 6+ pets since the page was designed with only 4 pets in mind.
 
-Note that this only works on Mystery Island Training and Krawk Island and NOT the Secret Ninja Training Academy because I don't yet have any level 250 Neopets...
+Note that this has only been tested on Mystery Island Training and Krawk Island and NOT the Secret Ninja Training Academy because I don't yet have any level 250 Neopets...
+
+There are TWO
 
 #### Features
 
 * Neopets are compressed into a table (3-5 columns looks pretty good)
 * Removes unnecessary text and whitespace from each area to conserve more space
-* Aggregates currently needed payments, allowing you to easily determine how many of each Dubloon/Codestone you need
+* Aggregates currently needed payments, allowing you to easily determine how many of each Dubloon/Codestone you need.
+* When opening SDB from this page, fills the Codestones/Dubloon counts with required counts (similar to Auto-filling the Til value)
 * Color coded states of training. This is configurable.
+* Allows training initialization from the Status Page
+* Immediately navigates you out of the Complete Course page back to the Status Page.
 
 TODO-list
 
-* Allow training initialization from the Status Page
-* Support Secret Ninja Training Academy
+* Test Secret Ninja Training Academy
+* Consider navigating straight to status page from the main/courses page.
 
 #### Customization
 
@@ -64,27 +71,26 @@ At the top of the file, you can edit the `CONFIG` object to more appropriately c
 
 ```js
 const CONFIG = {
-    // Number of columns to show pets for.
-    // 5 fits within the white border. 2-4 all work as well.
+    // Number of Columns. 5 is the max that fits "nicely". 3-5 all work well.
     columns: 5,
-    // Show the SDB button along with the aggregated payments required.
-    showAllSdbButton: true,
-    // Enable search buttons for individual payment types.
-    searchButton: {
-        safetyDepositBox: true,
-        shopWizard: true,
-    },
-    // These should be accepted CSS colors, but they can be color codes as well
+    // Whether to add Shop Wizard button next to Codestone/Dubloons
+    shopWizardBtn: true,
+    // Whether to add Safety Deposit Box button next to Codestone/Dubloons
+    sdbBtn: true,
+    // Background Colors to apply to the status area depending on context.
+    // Must be CSS colors.
     statusColor: {
-        noTraining: 'lightgray',
-        activeTraining: 'moccasin',
-        courseCompletion: 'lightgreen',
-        needPayment: 'indianred',
+        notTraining: 'lightgray',
+        needsPayment: 'indianred',
+        inProgress: 'moccasin',
+        complete: 'lightgreen',
     },
-    // TODO: Currently does nothing. Could be used to show stats on the Courses page
-    storePetStats: false,
-    // Border coloring for each pet.
+
+    // Border of each Pet Card.
     borderColor: '1px solid gray',
+
+    // Quickly Navigate back to Status Page after Course Completion.
+    skipCompleteCourseScreen: true,
 };
 ```
 
