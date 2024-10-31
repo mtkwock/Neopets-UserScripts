@@ -126,10 +126,16 @@ const CONFIG = {
 
     // Comment out to remove graying/highlighting of locations.
     enabledLocations: [
+        '/books_read.phtml', // Required for getting read books.
+        '/moon/books_read.phtml', // Required for Booktastic Books
+        '/mtkwock/Neopets-UserScripts/refs/heads/main/all_books.json', // Required for getting unread books
+
         '/safetydeposit.phtml', // Safety Deposit Box
-        '/browseshop.phtml', // Player Shops
         '/inventory.phtml', // Player Inventory
         '/gallery/index.phtml', // Player Galleries
+        '/auctions.phtml', // Auction House
+        '/genie.phtml', // Auction Genie
+        '/island/tradingpost.phtml', // Trading Post
     ],
 };
 ```
@@ -164,7 +170,7 @@ The below have relatively difficult impementations that may prohibit feature cre
 
   Instead, Using a GitHub page that holds (most) books to calculate unread books - See Mainline Features [6].
 
-3. [Low Priority - Not Doing] In your Pet Lookup, able to list UNREAD books, along with links to JellyNeo, Shop Wizard, Trading Post.
+3. [Low Priority - Not Doing] ~~In your Pet Lookup, able to list UNREAD books, along with links to JellyNeo, Shop Wizard, Trading Post.~~ use the Github link frmo the Pet Lookup.
 
 4. [POSSIBLE] When reading a book to your pet, auto-updates local DB of read and unread books.
 
@@ -172,6 +178,8 @@ These might be considered unfair for other players and are being reviewed.
 
 1. [REJECTED] Proposal 1: ~~In PLAYER SHOPS, books your ACTIVE PET has read are grayed out. - No notable time-based advantage since player shops are already the market competition.~~
 
-   [DONE] Proposal 2: Add a button that can be clicked to check an item's read status. This is equivalent to copying the item name and searching for it in a read/unread text file.
+   [PENDING] Proposal 2: Add a button that can be clicked to check an item's read status. This is equivalent to copying the item name and searching for it in a read/unread text file.
+
+   This is no longer implemented. Player shops have potential timing-based fire-sale advantages if this is enabled.
 
 2. [REJECTED] ~~In NPC SHOPS, books your ACTIVE PET has read are grayed out.~~ This gives potential timing-based advantage if the player chooses only "cheap/common" books as their active pet.

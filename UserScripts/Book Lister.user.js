@@ -2,12 +2,11 @@
 // @name         Book Lister
 // @namespace    http://tampermonkey.net/
 // @version      2024-10-26
-// @description  Grays out read books in Inventory, SDB, and player shops for active pet.
+// @description  Grays out read books in Inventory, SDB, Galleries, Trading Post, and Auctions for active pet.
 // @author       You
 // @match        https://www.neopets.com/books_read.phtml?pet_name=*
 // @match        https://www.neopets.com/moon/books_read.phtml?pet_name=*
 // @match        https://www.neopets.com/safetydeposit.phtml*
-// @match        https://www.neopets.com/browseshop.phtml*
 // @match        https://www.neopets.com/inventory.phtml
 // @match        https://www.neopets.com/gallery/index.phtml*
 // @match        https://www.neopets.com/auctions.phtml*
@@ -40,7 +39,6 @@ const CONFIG = {
         '/mtkwock/Neopets-UserScripts/refs/heads/main/all_books.json', // Required for getting unread books
 
         '/safetydeposit.phtml', // Safety Deposit Box
-        '/browseshop.phtml', // Player Shops
         '/inventory.phtml', // Player Inventory
         '/gallery/index.phtml', // Player Galleries
         '/auctions.phtml', // Auction House
@@ -359,57 +357,6 @@ class SdbBookHighlighter extends AbstractBookHighlighter {
     }
 }
 
-class PlayerShopHighlighter extends AbstractBookHighlighter {
-    getBooks() {
-        const buyAnchors = [...document.getElementsByTagName('a')].filter((a) => a.href.includes('buy_item.phtml?'));
-        return buyAnchors.map(
-            (a) => {
-                return {
-                    name: a.parentElement.getElementsByTagName('b')[0].innerText,
-                    imgName: extractTastic(a.children[0]),
-                    highlightLocation: a.parentElement,
-                };
-            });
-    }
-
-    async highlightBooks() {
-        const books = await this.getBooks();
-        for (const {name, imgName, highlightLocation} of books) {
-            const checkBtn = document.createElement('button');
-            checkBtn.innerText = 'Check Read Status';
-            checkBtn.onclick = async () => {
-                checkBtn.innerText = 'Checking...';
-                checkBtn.disabled = true;
-                await new Promise(resolve => setTimeout(resolve, 350 + 300 * Math.random()));
-                if (this.activePetBooks.has(name) || this.activePetTastic.has(imgName)) {
-                    this.lowlight(highlightLocation);
-                    checkBtn.innerText = 'Book Read';
-                } else if (this.activePetUnread.has(name) || this.activePetUnreadTastic.has(imgName)) {
-                    this.highlight(highlightLocation);
-                    checkBtn.innerText = 'Book not Read';
-                } else {
-                    checkBtn.innerText = 'Not a Book?';
-                }
-            };
-
-            // First element of the row, needs to append the row
-            if (!highlightLocation.previousElementSibling) {
-                const itemTr = highlightLocation.parentElement;
-                const buttonTr = document.createElement('tr');
-                if (!itemTr.nextElementSibling) {
-                    itemTr.parentElement.appendChild(buttonTr);
-                } else {
-                    itemTr.parentElement.insertBefore(buttonTr, itemTr.nextElementSibling);
-                }
-            }
-
-            const td = document.createElement('td');
-            td.appendChild(checkBtn);
-            highlightLocation.parentElement.nextElementSibling.appendChild(td);
-        }
-    }
-}
-
 class AuctionHighlighter extends AbstractBookHighlighter {
     getBooks() {
         const itemRows = [...document.getElementsByClassName('content')[0].getElementsByTagName('tr')].filter(tr => tr.children[0].innerText.match(/^\d+$/));
@@ -490,7 +437,6 @@ const pathToHandlers = {
     '/mtkwock/Neopets-UserScripts/refs/heads/main/all_books.json': UnreadBooksHandler,
 
     '/safetydeposit.phtml': SdbBookHighlighter,
-    '/browseshop.phtml': PlayerShopHighlighter,
     '/auctions.phtml': AuctionHighlighter,
     '/genie.phtml': AuctionHighlighter,
     '/inventory.phtml': InventoryHighlighter,
