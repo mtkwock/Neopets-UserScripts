@@ -42,27 +42,32 @@ You can always adjust the actual variables within the options to make it very cu
 
 NOTE: Training Card is the newer of the two after realizing that building the table constructively instead of modifying the existing table is far more stable and flexible. I suggest using that one as it's probably more stable and fully featured.
 
-**STATUS:** `PENDING APPROVAL` - Sending to r/Neopets mods for approval
+**STATUS:** `APPROVED` - Reformatter has been APPROVED for sharing and usage by Neopets moderators.
+
+NOTE: Training Card(v2) and Training Center(v2.1) have not yet been approved, but are more stable as I will be updating those.
 
 Highly condenses the Training Status Page into a smaller (slightly configurable) grid. This also aggregates payments and shows it on the Safety Deposit Box when you navigate there. This is very useful if you have more than 6+ pets since the page was designed with only 4 pets in mind.
 
 Note that this has only been tested on Mystery Island Training and Krawk Island and NOT the Secret Ninja Training Academy because I don't yet have any level 250 Neopets...
 
-There are TWO
+There are THREE different versions of this script. Currently only v1 (Training Reformatter) is approved for use. I am now sending in v2.1 for review.
 
 #### Features
 
 * Neopets are compressed into a table (3-5 columns looks pretty good)
 * Removes unnecessary text and whitespace from each area to conserve more space
 * Aggregates currently needed payments, allowing you to easily determine how many of each Dubloon/Codestone you need.
-* When opening SDB from this page, fills the Codestones/Dubloon counts with required counts (similar to Auto-filling the Til value)
-* Color coded states of training. This is configurable.
-* Allows training initialization from the Status Page
-* Immediately navigates you out of the Complete Course page back to the Status Page.
+* (v2) Color coded states of training. This is configurable.
+* (v2) When opening SDB from this page, fills the Codestones/Dubloon counts with required counts (similar to Auto-filling the Til value)
+* (v2) Allows training initialization from the Status Page
+* (v2) Immediately navigates you out of the Complete Co20urse page back to the Status Page.
+* (v2.1) All updates to pet training status can be done without reloading the page. This uses fetches to update the page so we can avoid the excess page reloads! Updates are "Complete Course", "Start Course", "Pay", and "Cancel"
+* (v2.1) Added a Log Area so players can see what has occurred!
+* (v2.1) Ability to censor names using arbitrary function. Example censors `MyPetName` into `MyPe*******`
 
 TODO-list
 
-* Test Secret Ninja Training Academy
+* Test Secret Ninja Training Academy (Probably supported in 2.0 and 2.1)
 * Consider navigating straight to status page from the main/courses page.
 
 #### Customization

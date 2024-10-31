@@ -2,7 +2,7 @@
 // @name         Training Island Card Generator
 // @namespace    http://tampermonkey.net/
 // @version      2024-10-28
-// @description  try to take over the world!
+// @description  Condense Training Table (v1, Deprecated)
 // @author       You
 // @match        https://www.neopets.com/island/training.phtml?type=status*
 // @match        https://www.neopets.com/pirates/academy.phtml?type=status*
