@@ -2,7 +2,7 @@
 // @name         Training Island Card Generator
 // @namespace    neopets.training
 // @version      2024-10-28
-// @description  Highly condenses Training into the Status Page.
+// @description  Highly condenses Training into the Status Page. V2
 // @author       You
 // @match        https://www.neopets.com/island/training.phtml?type=status*
 // @match        https://www.neopets.com/pirates/academy.phtml?type=status*
@@ -419,5 +419,4 @@ class TrainingTable {
     tbl.parentElement.insertBefore(trainingTable.renderCostTable(), final);
 
     tbl.parentElement.removeChild(tbl);
-
 })();
