@@ -44,7 +44,7 @@ const CONFIG = {
     // Censor your pet's names for screenshots with the given string.
     // Setting this to false or an empty string ('') will disable.
     // Alternatively, comment this line out.
-    censorPetName: (name) => (name.slice(0, 4) + '*******'),
+    // censorPetName: (name) => (name.slice(0, 4) + '*******'),
 };
 
 const censorFn = CONFIG.censorPetName || ((name) => name);
@@ -408,7 +408,6 @@ ${CONFIG.oneStatColumn ? '</tr><tr>' : ''}
             newStatus = Status.NEEDS_PAYMENT;
             const paymentBs = [...statusTd.getElementsByTagName('b')].filter(b => b.innerText.includes('Codestone') || b.innerText.includes('Dubloon'));
             for (const paymentB of paymentBs) {
-                console.log(paymentB, paymentB.innerText);
                 this.costs.push(paymentB.innerText);
             }
 
