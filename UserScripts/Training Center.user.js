@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Training Center
 // @namespace    neopets.training
-// @version      2024-10-30
-// @description  Highly condenses Training into the Status Page. (v2.1)
+// @version      2024-11-08
+// @description  Highly condenses Training into the Status Page.
 // @author       You
 // @match        https://www.neopets.com/island/training.phtml?type=status*
 // @match        https://www.neopets.com/pirates/academy.phtml?type=status*
-// @match        https://www.neopets.com/island/fight_training.phtml?status*
+// @match        https://www.neopets.com/island/fight_training.phtml?type=status*
 // @match        https://www.neopets.com/safetydeposit.phtml?obj_name=&category=2
 // @match        https://www.neopets.com/safetydeposit.phtml?obj_name=&category=3
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=neopets.com
@@ -42,15 +42,16 @@ const CONFIG = {
     oneStatColumn: false,
 
     // Censor your pet's names for screenshots with the given string.
-    // Mostly used for dev examples.
-    // Comment this line out to disable censoring.
+    // Setting this to false or an empty string ('') will disable.
+    // Alternatively, comment this line out.
     // censorPetName: (name) => (name.slice(0, 4) + '*******'),
 };
 
 const censorFn = CONFIG.censorPetName || ((name) => name);
 
-async function showCostsOnSdb() {
-    const costString = await GM.getValue('trainingPayment', '{}');
+// Fill out needed Codestones and Dubloons.
+async function handleSdbEnter() {
+    const costString = await GM.getValue('trainingPayment', 'false');
     const costs = JSON.parse(costString);
 
     if (!costs) {
@@ -59,32 +60,31 @@ async function showCostsOnSdb() {
 
     for (const cost in costs) {
         const itemNameB = [...document.getElementsByTagName('b')].filter(b => b.innerText.includes(cost))[0];
+        const qtyNeeded = costs[cost];
+        let itemCount = 0;
         if (!itemNameB) {
-            console.warn('None of item included', cost);
+            alert('Missing required item: ' + cost);
             continue;
         }
+        const [imgTd, nameTd, desTd, typeTd, qtyTd, removeTd] = [...itemNameB.parentElement.parentElement.children];
+        itemCount = Number(qtyTd.innerText.replace(',', ''));
+
         const neededEl = document.createElement('b');
-        neededEl.innerText = `Need x${costs[cost]}`;
-        const removeCountTd = itemNameB.parentElement.parentElement.children[5];
-        removeCountTd.appendChild(document.createElement('br'));
-        removeCountTd.appendChild(neededEl);
-    }
-}
+        neededEl.innerText = `Need x${qtyNeeded}`;
+        removeTd.appendChild(document.createElement('br'));
+        removeTd.appendChild(neededEl);
 
-// Fill out needed Codestones and Dubloons.
-async function fillSdbForm() {
-    const costString = await GM.getValue('trainingPayment', '{}');
-    const costs = JSON.parse(costString);
-
-    const removeInputs = [...document.getElementsByClassName('content')[0].getElementsByClassName('remove_safety_deposit')];
-    for (const removeInput of removeInputs) {
-        const nameTd = removeInput.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling;
-        const name = nameTd.innerText.split('\n')[0].trim();
-        if (name in costs) {
-            removeInput.value = costs[name];
+        if (itemCount < qtyNeeded) {
+            alert(`Insufficient ${cost}: Need ${costs[cost]}, but only have ${itemCount}`);
+            neededEl.style.color = 'red';
+        } else {
+            const removeInput = removeTd.getElementsByTagName('input')[0];
+            removeInput.value = qtyNeeded;
             removeInput.setAttribute('data-remove_val', 'y');
         }
     }
+
+    GM.deleteValue('trainingPayment');
 }
 
 const Status = {
@@ -94,17 +94,11 @@ const Status = {
     COMPLETE: 'Complete',
 };
 
-const CourseType = ['Level', 'Strength', 'Defence', 'Agility', 'Endurance'];
-function signUpHref(name, course) {
-    const path = `process_${window.location.pathname.split('/').pop()}`;
-    const params = `?type=start&course_type=${course}&pet_name=${name}`;
-    return path + params;
-}
-
 function createSwLink(item) {
     const a = document.createElement('a');
     a.href = 'https://www.neopets.com/shops/wizard.phtml?string=' + item.replace(/\s/g, '+');
     a.innerText = 'SW';
+    a.target = '_blank';
     return a;
 }
 
@@ -112,6 +106,7 @@ function createSdbLink(item) {
     const a = document.createElement('a');
     a.href = 'https://www.neopets.com/safetydeposit.phtml?category=0&obj_name=' + item.replace(/\s/g, '+');
     a.innerText = 'SDB';
+    a.target = '_blank';
     return a;
 }
 
@@ -223,7 +218,6 @@ class Pet {
     }
 
     displayName() {
-        console.log(CONFIG.censorPetName || this.name);
         return censorFn(this.name);
     }
 
@@ -382,7 +376,7 @@ ${CONFIG.oneStatColumn ? '</tr><tr>' : ''}
                     startCourse(this.name, course)
                         .then((txt) => this.updateFn(txt));
                 }
-                a.title = `Train ${CONFIG.censorPetName || this.name}'s ${a.getAttribute('value')}`;
+                a.title = `Train ${this.displayName()}'s ${a.getAttribute('value')}`;
             } else if(!canTrain && a.innerText.includes('+')) {
                 // Remove the +
                 a.innerText = a.innerText.match(/\w+:/)[0];
@@ -412,16 +406,19 @@ ${CONFIG.oneStatColumn ? '</tr><tr>' : ''}
         } else if (statusTd.innerText.includes('Dubloon') || statusTd.innerText.includes('Codestone')) {
             this.costs = [];
             newStatus = Status.NEEDS_PAYMENT;
-            for (const paymentB of statusTd.getElementsByTagName('b')) {
+            const paymentBs = [...statusTd.getElementsByTagName('b')].filter(b => b.innerText.includes('Codestone') || b.innerText.includes('Dubloon'));
+            for (const paymentB of paymentBs) {
                 this.costs.push(paymentB.innerText);
             }
 
             this.payTbl = document.createElement('table');
+            this.payTbl.style.width = '100%';
             this.payTbl.innerHTML = `<tbody>
 <tr>
   <td>
     <button value='${this.name}-pay'>Pay</button>
   </td>
+  <td style='width:20px'></td>
   <td>
     <button value='${this.name}-cancel'>Cancel</button>
   </td>
@@ -430,8 +427,14 @@ ${CONFIG.oneStatColumn ? '</tr><tr>' : ''}
             for (const btn of this.payTbl.getElementsByTagName('button')) {
                 btn.onclick = () => {
                     log(`${this.displayName()} - ${btn.innerText}ing Course...`);
-                    this.setLoading();
                     const [pet, opt] = btn.value.split('-');
+                    if (opt == 'cancel' && location.pathname.includes('fight')) {
+                        if (!confirm('Are you SURE you wish to stop this course and incur a 24hr penalty?\n\nTo continue, click [OK].\n\nTo abort, click [CANCEL].')) {
+                            log('Aborting cancellation.');
+                            return;
+                        }
+                    }
+                    this.setLoading();
                     processCourse(pet, opt).then(this.updateFn);
                 }
             }
@@ -511,7 +514,6 @@ ${CONFIG.oneStatColumn ? '</tr><tr>' : ''}
 
 /**
  * Reactive Table generated from the original Training Table.
- *
  */
 class TrainingTable {
     constructor(baseTable) {
@@ -670,9 +672,7 @@ class TrainingTable {
     'use strict';
 
     if (location.pathname == "/safetydeposit.phtml") {
-        Promise.every([fillSdbForm(), showCostsOnSdb()]).then(() => {
-            GM.deleteValue('trainingPayment');
-        });
+        handleSdbEnter();
         return;
     }
 
