@@ -42,7 +42,7 @@ You can always adjust the actual variables within the options to make it very cu
 
 NOTE: Training Card is the newer of the two after realizing that building the table constructively instead of modifying the existing table is far more stable and flexible. I suggest using that one as it's probably more stable and fully featured.
 
-**STATUS:** `APPROVED` - Reformatter has been APPROVED for sharing and usage by Neopets moderators.
+**STATUS:** `APPROVED` - Training Center (v2.1) has been approved for general use by Discord mods!  Huzzah!
 
 NOTE: Training Card(v2) and Training Center(v2.1) have not yet been approved, but are more stable as I will be updating those.
 
@@ -101,13 +101,13 @@ const CONFIG = {
 
 ### Book Library
 
-**Status:** `FEEDBACK RECEIVED, UPDATE PENDING APPROVAL` - Implementation done. Certain JN features and Player Shop features required changing. Updated with new propals, re-submitting Script for approval by r/Neopets mods.
+**Status:** `APPROVED` - Current Implementation (Without Player Shop support) approved for use by r/Neopets Discord mods. Huzzah!
 
 This script keeps an internal memory of your books read for each of your pets. It also grays-out books that you have read in your SDB, Inventory, and Shop Stock/Gallery.
 
 To update your pet's read-book list, visit `https://www.neopets.com/books_read.phtml?pet_name=[PETNAME]` along with the Booktastic page. Additionally, go to [JN's Book Checklist](https://items.jellyneo.net/tools/book-checklist/) and follow directions to set up your pet's unread checklist. You only need to go to JN's checklist once per pet (or if new books come out). However, in order to update your read list (e.g. after reading a dozen books), you will still need to visit your pet lookup page(s) again.
 
-Updatae the CONFIG object at the beginning of the script to customize the script to change how highlights and lowlights are shown along with disabling of locations.
+Update the CONFIG object at the beginning of the script to customize the script to change how highlights and lowlights are shown along with disabling of locations.
 
 ```js
 const CONFIG = {
@@ -183,3 +183,9 @@ These might be considered unfair for other players and are being reviewed.
    This is no longer implemented. Player shops have potential timing-based fire-sale advantages if this is enabled.
 
 2. [REJECTED] ~~In NPC SHOPS, books your ACTIVE PET has read are grayed out.~~ This gives potential timing-based advantage if the player chooses only "cheap/common" books as their active pet.
+
+### Five Finger Discount Hider
+
+Makes the User Shops looks like normal when the Five Finger Discount perk is available by hiding the original prices and making the discounted prices appear normal.  This is just to have less of a painful design when choosing the perk.
+
+**STATUS:** Sending for approval
